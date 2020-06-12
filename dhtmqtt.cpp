@@ -6,26 +6,22 @@
 #include <SPI.h>
 #include <Wire.h>
 
-#define WIFI_SSID "wifi user"
-#define WIFI_PASSWORD "password"
+#define WIFI_SSID "wifi name"
+#define WIFI_PASSWORD "wifi password"
 
-// Raspberri Pi Mosquitto MQTT Broker
-#define MQTT_HOST IPAddress(192, 168, 0, 182)
-// For a cloud MQTT broker, type the domain name
-//#define MQTT_HOST "example.com"
+// Raspberry Pi (laptop) Mosquitto MQTT Broker so that ESP connects to broker
+#define MQTT_HOST IPAddress(laptop IP)
 #define MQTT_PORT 1883
 
-// Temperature MQTT Topics
+// MQTT Topics
 #define MQTT_PUB_TEMP "esp/dht/temperature"
 #define MQTT_PUB_HUM "esp/dht/humidity"
 
 // Digital pin connected to the DHT sensor
 #define DHTPIN 5
 
-// Uncomment whatever DHT sensor type you're using
-//#define DHTTYPE DHT11   // DHT 11
-#define DHTTYPE DHT11   // DHT 22  (AM2302), AM2321
-//#define DHTTYPE DHT21   // DHT 21 (AM2301)
+// define sensor type
+#define DHTTYPE DHT11
 
 // Initialize DHT sensor
 DHT dht(DHTPIN, DHTTYPE);
@@ -34,6 +30,8 @@ DHT dht(DHTPIN, DHTTYPE);
 float temp;
 float hum;
 
+// Create an AsyncMqttClient object to handle the MQTT client
+// timers to reconnect to your MQTT broker and router when it disconnects
 AsyncMqttClient mqttClient;
 Ticker mqttReconnectTimer;
 
@@ -41,13 +39,15 @@ WiFiEventHandler wifiConnectHandler;
 WiFiEventHandler wifiDisconnectHandler;
 Ticker wifiReconnectTimer;
 
-unsigned long previousMillis = 0;   // Stores last time temperature was published
-const long interval = 10000;        // Interval at which to publish sensor readings
+unsigned long previousMillis = 0;   // last time temperature was published
+const long interval = 10000;        // Interval between sensor readings
 
+//connects ESP to router
 void connectToWifi() {
   Serial.println(F("Connecting to Wi-Fi..."));
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 }
+
 void connectToMqtt();
 
 void onWifiConnect(const WiFiEventStationModeGotIP& event) {
@@ -61,6 +61,7 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
   wifiReconnectTimer.once(2, connectToWifi);
 }
 
+//connects ESP to mqtt broker
 void connectToMqtt() {
   Serial.println(F("Connecting to MQTT..."));
   mqttClient.connect();
@@ -106,6 +107,7 @@ void setup() {
 
   dht.begin();
 
+//allows MQTT broker and Wi-Fi connection to reconnect if connection is lost
   wifiConnectHandler = WiFi.onStationModeGotIP(onWifiConnect);
   wifiDisconnectHandler = WiFi.onStationModeDisconnected(onWifiDisconnect);
 
@@ -115,16 +117,13 @@ void setup() {
   //mqttClient.onUnsubscribe(onMqttUnsubscribe);
   mqttClient.onPublish(onMqttPublish);
   mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-  // If your broker requires authentication (username and password), set them below
-  //mqttClient.setCredentials("REPlACE_WITH_YOUR_USER", "REPLACE_WITH_YOUR_PASSWORD");
 
   connectToWifi();
 }
 
 void loop() {
   unsigned long currentMillis = millis();
-  // Every X number of seconds (interval = 10 seconds)
-  // it publishes a new MQTT message
+  // Every X seconds it publishes a new MQTT message
   if (currentMillis - previousMillis >= interval) {
     // Save the last time a new reading was published
     previousMillis = currentMillis;
@@ -135,14 +134,15 @@ void loop() {
     // Read temperature as Fahrenheit (isFahrenheit = true)
     //temp = dht.readTemperature(true);
 
-    // Publish an MQTT message on topic esp/dht/temperature
+    // Publish an MQTT message on topic esp/dht/temperature (topic,qos,retain flag, sensor reading(payload))
     uint16_t packetIdPub1 = mqttClient.publish(MQTT_PUB_TEMP, 1, true, String(temp).c_str());
     Serial.printf("Publishing on topic %s at QoS 1, packetId: %i ", MQTT_PUB_TEMP, packetIdPub1);
-    Serial.printf("Message: %.2f \n", temp);
+    Serial.printf("Temperature: %.2f deg C\n", temp);
 
     // Publish an MQTT message on topic esp/dht/humidity
     uint16_t packetIdPub2 = mqttClient.publish(MQTT_PUB_HUM, 1, true, String(hum).c_str());
     Serial.printf("Publishing on topic %s at QoS 1, packetId %i: ", MQTT_PUB_HUM, packetIdPub2);
-    Serial.printf("Message: %.2f \n", hum);
+    Serial.printf("Humidity: %.2f %%\n", hum);
+    Serial.printf("Time: %lu s\n", (currentMillis/1000));
   }
 }
