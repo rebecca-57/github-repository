@@ -1,0 +1,430 @@
+[
+    {
+        "id": "39a4e239.16e9be",
+        "type": "tab",
+        "label": "DHT MQTT",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "634d2efe.8f986",
+        "type": "mqtt in",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "topic": "esp/dht/temperature",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "7df340c0.2f81d",
+        "x": 270,
+        "y": 520,
+        "wires": [
+            [
+                "efe24d73.b6947",
+                "71976a63.d23114",
+                "196d4419.cd6bfc"
+            ]
+        ]
+    },
+    {
+        "id": "580f8923.65b508",
+        "type": "mqtt in",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "topic": "esp/dht/humidity",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "7df340c0.2f81d",
+        "x": 250,
+        "y": 620,
+        "wires": [
+            [
+                "e9a02937.3d2a88",
+                "be30c6d1.5d5448",
+                "4923006c.42b63"
+            ]
+        ]
+    },
+    {
+        "id": "efe24d73.b6947",
+        "type": "ui_chart",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "group": "184aed3.7311913",
+        "order": 0,
+        "width": "6",
+        "height": "5",
+        "label": "Temperature",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "20",
+        "ymax": "40",
+        "removeOlder": "30",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 470,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e9a02937.3d2a88",
+        "type": "ui_chart",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "group": "184aed3.7311913",
+        "order": 1,
+        "width": "6",
+        "height": "5",
+        "label": "Humidity",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "dd HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "30",
+        "ymax": "65",
+        "removeOlder": "30",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 510,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "71976a63.d23114",
+        "type": "file",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "filename": "C:\\Users\\Hp\\Desktop\\1st Year\\Project\\nodered\\temperature",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 790,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "be30c6d1.5d5448",
+        "type": "file",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "filename": "C:\\Users\\Hp\\Desktop\\1st Year\\Project\\nodered\\humidity",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 780,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8c5b48af.cac518",
+        "type": "openweathermap in",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Dubai",
+        "country": "United Arab Emirates",
+        "language": "en",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "1d8ca5b0.8129ca",
+                "23baee15.66c352",
+                "d4dfb4ab.ceeb38"
+            ]
+        ]
+    },
+    {
+        "id": "1d8ca5b0.8129ca",
+        "type": "change",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.tempc",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 280,
+        "wires": [
+            [
+                "228693a9.f38c1c",
+                "658b969d.c49d68"
+            ]
+        ]
+    },
+    {
+        "id": "23baee15.66c352",
+        "type": "change",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "time",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 160,
+        "wires": [
+            [
+                "8fa90106.3f7cd",
+                "5b8b233e.98f7fc"
+            ]
+        ]
+    },
+    {
+        "id": "d4dfb4ab.ceeb38",
+        "type": "change",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.humidity",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 220,
+        "wires": [
+            [
+                "79a4e0ec.6acf3",
+                "7095b4b3.55b36c"
+            ]
+        ]
+    },
+    {
+        "id": "8fa90106.3f7cd",
+        "type": "file",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "filename": "C:\\Users\\Hp\\Desktop\\1st Year\\Project\\nodered\\time",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 890,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "79a4e0ec.6acf3",
+        "type": "file",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "filename": "C:\\Users\\Hp\\Desktop\\1st Year\\Project\\nodered\\localhumidity",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 920,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "228693a9.f38c1c",
+        "type": "file",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "filename": "C:\\Users\\Hp\\Desktop\\1st Year\\Project\\nodered\\localtemp",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 870,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5b8b233e.98f7fc",
+        "type": "debug",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 770,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "7095b4b3.55b36c",
+        "type": "debug",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 770,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "658b969d.c49d68",
+        "type": "debug",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 770,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "196d4419.cd6bfc",
+        "type": "debug",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 740,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "4923006c.42b63",
+        "type": "debug",
+        "z": "39a4e239.16e9be",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 510,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "7df340c0.2f81d",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "184aed3.7311913",
+        "type": "ui_group",
+        "z": "",
+        "name": "DHT",
+        "tab": "2d44c090.f4173",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "2d44c090.f4173",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
