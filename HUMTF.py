@@ -1,5 +1,5 @@
 #IMPORT BASIC STUFF######
-
+import os
 import sys
 sys.path.append("c:\python38\lib\site-packages")
 import functools
@@ -13,6 +13,11 @@ import matplotlib.pyplot as plt
 
 Temp_Data_Path = r'C:\Users\ocean\Desktop\DHTDATA\Training_data.csv'
 Test_Data_Path = r'C:\Users\ocean\Desktop\DHTDATA\Training_data.csv'
+
+#defines spot model weights are saved
+checkpoint_path = "training_1/cp.ckpt"
+
+
 
 EPOCHS = 25
 BATCH_SIZE = 5
@@ -129,12 +134,30 @@ H_model.compile(
     optimizer=tf.keras.optimizers.RMSprop(0.001),
     metrics=['mae', 'mse'])
 
+#create data saver
+checkpoint_dir = os.path.dirname(checkpoint_path)
+# Create a callback that saves the model's weights
+cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1,
+                                                 period = EPOCHS
+                                                 )
+
+
 #final data preparation
 H_train_data = PACKED_H.shuffle(500)
 H_Test_data = PACKED_H_TEST
 
+
+H_model.load_weights(checkpoint_path)
+
+
 #start model training
-H_model.fit(H_train_data,epochs=EPOCHS)
+H_model.fit(H_train_data,epochs=EPOCHS,
+            callbacks=[cp_callback]
+            )
+
+
 
 #show final average error
 loss, mae, mse = H_model.evaluate(PACKED_H_TEST)

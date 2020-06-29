@@ -1,5 +1,6 @@
 #IMPORT BASIC STUFF######
 
+import os
 import sys
 sys.path.append("c:\python38\lib\site-packages")
 import functools
@@ -13,6 +14,10 @@ import matplotlib.pyplot as plt
 
 Temp_Data_Path = r'C:\Users\ocean\Desktop\DHTDATA\Training_data.csv'
 Test_Data_Path = r'C:\Users\ocean\Desktop\DHTDATA\Training_data.csv'
+
+#defines spot model weights are saved
+checkpoint_path = "training_2/cp.ckpt"
+
 
 EPOCHS = 25
 BATCH_SIZE = 5
@@ -115,7 +120,7 @@ T_numeric_columns = [T_numeric_column]
 
 
 
-#CREATE OUR ACTUAL MODELS
+#CREATE OUR ACTUAL MODEL
 T_model = tf.keras.Sequential([
   tf.keras.layers.DenseFeatures(T_numeric_columns),
   tf.keras.layers.Dense(64, activation='relu'),
@@ -123,18 +128,34 @@ T_model = tf.keras.Sequential([
   tf.keras.layers.Dense(1),
 ])
 
-#Put in the actualy loss metrics
+#Put in the actual loss metrics
 T_model.compile(
     loss='mse',
     optimizer=tf.keras.optimizers.RMSprop(0.001),
     metrics=['mae', 'mse'])
 
+#set up data saver
+checkpoint_dir = os.path.dirname(checkpoint_path)
+# Create a callback that saves the model's weights
+cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1,
+                                                 period = EPOCHS
+                                                 )
+
+
+
 #final data preparation
 T_train_data = PACKED_T.shuffle(500)
 T_Test_data = PACKED_T_TEST
 
+
+T_model.load_weights(checkpoint_path)
+
 #start model training
-T_model.fit(T_train_data,epochs=EPOCHS)
+T_model.fit(T_train_data,epochs=EPOCHS,
+            callbacks=[cp_callback]
+            )
 
 #show final average error
 loss, mae, mse = T_model.evaluate(PACKED_T_TEST)
